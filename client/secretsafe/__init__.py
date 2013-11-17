@@ -13,9 +13,11 @@ class SecretSafe:
 		self.config = Config()
 		self.gpg = gnupg.GPG(gnupghome=os.path.expanduser(self.config.config.get("main","gnupghome")))
 		self._findprivatekey()
+		self.preauth()
 
-	def add(self):
+	def add(self, name):
 		print "I would add a secret if I knew how"
+		print name
 			
 	def _findprivatekey(self):
 		private_keys = self.gpg.list_keys(True) # True => private keys
