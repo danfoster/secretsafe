@@ -12,10 +12,12 @@ class SecretSafe:
 	def __init__(self):
 		self.config = Config()
 		self.gpg = gnupg.GPG(gnupghome=os.path.expanduser(self.config.config.get("main","gnupghome")))
+		self._findprivatekey()
 
-	def auth(self):
-		# Read in public and private keys
-		public_keys = self.gpg.list_keys() # same as gpg.list_keys(False)
+	def add(self):
+		print "I would add a secret if I knew how"
+			
+	def _findprivatekey(self):
 		private_keys = self.gpg.list_keys(True) # True => private keys
 
 		# Try and find the private key assosiated with the 'user' varible in
@@ -31,7 +33,6 @@ class SecretSafe:
 				+". Exiting..."
 			sys.exit(1)
 
-		self.preauth()
 
 	def preauth(self):
 		# Check the user has valid credentials to the private key, by encrypting

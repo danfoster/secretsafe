@@ -1,6 +1,23 @@
 #!/usr/bin/env python
 
 from secretsafe import SecretSafe
+import argparse
 
 ss = SecretSafe()
-ss.auth()
+
+def add(args):
+	print "hello"
+
+parser = argparse.ArgumentParser(description="Secret Safe: A multi-user password safe.")
+subparsers = parser.add_subparsers()
+
+parser_add = subparsers.add_parser('add', help = "Add Secret")
+parser_add.set_defaults(func=ss.add)
+parser_list = subparsers.add_parser('list', help = "List Secrets")
+
+args = parser.parse_args()
+
+ss.preauth()
+args.func()
+
+
