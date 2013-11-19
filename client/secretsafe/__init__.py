@@ -6,8 +6,9 @@ class Config:
 		self.config = ConfigParser.ConfigParser()
 		self.config.readfp(open(os.path.expanduser('~/.secretsafe')))
 		self.user = self.config.get("main","user")
+		self.secrets = os.path.expanduser(self.config.get("main","secrets"))
 
-import gnupg, sys, random
+import gnupg, sys, random, os, getpass
 class SecretSafe:
 	def __init__(self):
 		self.config = Config()
@@ -16,9 +17,22 @@ class SecretSafe:
 		self.preauth()
 
 	def add(self, name):
-		print "I would add a secret if I knew how"
-		print name
-			
+		secretpath = os.path.join(self.config.secrets,name)
+
+		# Check to see if secretpath already exists.
+		if os.path.exists(secretpath):
+			print "A secretpath under this name exists, not adding."
+			return 1
+		os.mkdir(secretpath)
+
+		# Prompt for user to enter secretpath
+		secret = getpass.getpass("Enter Secret (not echoed): ")
+
+		# Write the secret in plain text
+		file = open(os.path.join(secretpath,"plain"),"w")
+		file.write(secret)
+		file.close()
+
 	def _findprivatekey(self):
 		private_keys = self.gpg.list_keys(True) # True => private keys
 
