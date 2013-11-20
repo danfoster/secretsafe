@@ -5,6 +5,8 @@ import argparse
 
 def add():
 	ss.add(args.name)
+def get():
+	ss.get(args.name)
 
 parser = argparse.ArgumentParser(description="Secret Safe: A multi-user password safe.")
 subparsers = parser.add_subparsers()
@@ -12,6 +14,10 @@ subparsers = parser.add_subparsers()
 parser_add = subparsers.add_parser('add', help = "Add Secret")
 parser_add.set_defaults(func=add)
 parser_add.add_argument("name", help = "Name of the secret")
+
+parser_get = subparsers.add_parser('get' , help = "Get secret")
+parser_get.set_defaults(func=get)
+parser_get.add_argument("name", help = "Name of the secret")
 
 parser_list = subparsers.add_parser('list', help = "List Secrets")
 

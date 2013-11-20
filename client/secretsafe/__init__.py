@@ -21,17 +21,30 @@ class SecretSafe:
 
 		# Check to see if secretpath already exists.
 		if os.path.exists(secretpath):
-			print "A secretpath under this name exists, not adding."
+			print "A secret under this name exists, not adding."
 			return 1
 		os.mkdir(secretpath)
 
 		# Prompt for user to enter secretpath
 		secret = getpass.getpass("Enter Secret (not echoed): ")
+		secretgpg = str(self.gpg.encrypt(secret, self.config.user))
 
-		# Write the secret in plain text
-		file = open(os.path.join(secretpath,"plain"),"w")
-		file.write(secret)
-		file.close()
+		# Write the plain secret
+		with open(os.path.join(secretpath,"plain.gpg"),"w") as file:
+			file.write(secretgpg)
+
+	def get(self, name):
+		secretpath = os.path.join(self.config.secrets,name)
+
+		# Check to see if secretpath already exists.
+		if not os.path.exists(secretpath):
+			print "A secret under this name does not exist"
+			return 1
+
+		#Read the secret
+		with open(os.path.join(secretpath,"plain.gpg"),"r") as file:
+			secretgpg = file.read()
+		print self.gpg.decrypt(secretgpg)
 
 	def _findprivatekey(self):
 		private_keys = self.gpg.list_keys(True) # True => private keys
