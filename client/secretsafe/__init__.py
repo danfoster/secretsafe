@@ -9,6 +9,7 @@ class Config:
 		self.secrets = os.path.expanduser(self.config.get("main","secrets"))
 
 import gnupg, sys, random, os, getpass
+import re
 class SecretSafe:
 	def __init__(self):
 		self.config = Config()
@@ -48,11 +49,14 @@ class SecretSafe:
 			secretgpg = file.read()
 		print self.gpg.decrypt(secretgpg)
 
-	def list(self):
+	def list(self,pattern):
 		# List all secrets
+
+		prog = re.compile(pattern)
 		secrets = os.listdir(self.config.secrets)
 		for secret in secrets:
-			print secret
+			if prog.match(secret) != None:
+				print secret
 
 	def _findprivatekey(self):
 		private_keys = self.gpg.list_keys(True) # True => private keys
