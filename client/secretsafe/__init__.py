@@ -17,6 +17,7 @@ class SecretSafe:
 		self.preauth()
 
 	def add(self, name):
+		# Add a secret to the database
 		secretpath = os.path.join(self.config.secrets,name)
 
 		# Check to see if secretpath already exists.
@@ -34,6 +35,7 @@ class SecretSafe:
 			file.write(secretgpg)
 
 	def get(self, name):
+		# View a scret from the database
 		secretpath = os.path.join(self.config.secrets,name)
 
 		# Check to see if secretpath already exists.
@@ -45,6 +47,12 @@ class SecretSafe:
 		with open(os.path.join(secretpath,"plain.gpg"),"r") as file:
 			secretgpg = file.read()
 		print self.gpg.decrypt(secretgpg)
+
+	def list(self):
+		# List all secrets
+		secrets = os.listdir(self.config.secrets)
+		for secret in secrets:
+			print secret
 
 	def _findprivatekey(self):
 		private_keys = self.gpg.list_keys(True) # True => private keys
