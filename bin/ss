@@ -4,11 +4,11 @@ from secretsafe import SecretSafe
 import argparse
 
 def add():
-	ss.add(args.name)
+    ss.add(args.name)
 def get():
-	ss.get(args.name)
+    ss.get(args.name)
 def list():
-	ss.list(args.pattern)
+    ss.list(args.pattern)
 
 parser = argparse.ArgumentParser(description="Secret Safe: A multi-user password safe.")
 subparsers = parser.add_subparsers()
