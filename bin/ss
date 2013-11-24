@@ -1,33 +1,39 @@
 #!/usr/bin/env python
 
-from secretsafe import SecretSafe
 import argparse
+import sys
 
-def add():
-    ss.add(args.name)
-def get():
-    ss.get(args.name)
-def list():
-    ss.list(args.pattern)
+import secretsafe.client
 
-parser = argparse.ArgumentParser(description="Secret Safe: A multi-user password safe.")
-subparsers = parser.add_subparsers()
+def add(client, args):
+    client.add(args.name)
 
-parser_add = subparsers.add_parser('add', help = "Add Secret")
-parser_add.set_defaults(func=add)
-parser_add.add_argument("name", help = "Name of the secret")
+def get(client, args):
+    client.get(args.name)
 
-parser_get = subparsers.add_parser('get' , help = "Get secret")
-parser_get.set_defaults(func=get)
-parser_get.add_argument("name", help = "Name of the secret")
+def list(client, args):
+    client.list(args.pattern)
 
-parser_list = subparsers.add_parser('list', help = "List Secrets")
-parser_list.set_defaults(func=list)
-parser_list.add_argument("pattern", help = "Regular Expression of filter", default=".*", nargs="?")
+def main():
+    parser = argparse.ArgumentParser(description="Secret Safe: A multi-user password safe.")
+    subparsers = parser.add_subparsers()
 
-args = parser.parse_args()
+    parser_add = subparsers.add_parser('add', help = "Add Secret")
+    parser_add.set_defaults(func=add)
+    parser_add.add_argument("name", help = "Name of the secret")
 
-ss = SecretSafe()
-args.func()
+    parser_get = subparsers.add_parser('get' , help = "Get secret")
+    parser_get.set_defaults(func=get)
+    parser_get.add_argument("name", help = "Name of the secret")
 
+    parser_list = subparsers.add_parser('list', help = "List Secrets")
+    parser_list.set_defaults(func=list)
+    parser_list.add_argument("pattern", help = "Regular Expression of filter", default=".*", nargs="?")
 
+    args = parser.parse_args()
+
+    client = secretsafe.client.Client()
+    args.func(client, args)
+
+if __name__ == '__main__':
+    sys.exit(main())
