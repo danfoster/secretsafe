@@ -4,6 +4,7 @@ import random
 import os
 import getpass
 import re
+import pprint
 
 import config
 
@@ -12,7 +13,21 @@ class Client:
         self.config = config.Config()
         self.gpg = gnupg.GPG(gnupghome=os.path.expanduser(self.config.config.get("main","gnupghome")))
         self._findprivatekey()
-        self.preauth()
+#        self.preauth()
+
+    def checktrust(self, user):
+        keys = self.gpg.list_keys()
+        for key in keys:
+            for uid in key['uids']:
+                if uid == user:
+                    if key['trust'] == 'u':
+                        return 0
+                    else:
+                        print "ERROR: Key not trusted"
+                        return 1
+        print "ERROR: Key not found"
+        return 1
+
 
     def add(self, name):
         # Add a secret to the database
@@ -22,7 +37,10 @@ class Client:
         if os.path.exists(secretpath):
             print "A secret under this name exists, not adding."
             return 1
-        os.mkdir(secretpath)
+
+        #Check that users public key is trusted
+        if self.checktrust(self.config.user) == 1:
+            sys.exit(1)
 
         # Prompt for user to enter secretpath
         secret = getpass.getpass("Enter Secret (not echoed): ")
@@ -31,6 +49,7 @@ class Client:
             print "ERROR: Failed to encrypt secret."
             sys.exit(1)
 
+        os.mkdir(secretpath)
         # Write the plain secret
         with open(os.path.join(secretpath,"plain.gpg"),"w") as file:
             file.write(secretgpg)
