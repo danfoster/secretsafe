@@ -6,7 +6,7 @@ import sys
 import secretsafe.client
 
 def add(client, args):
-    client.add(args.name)
+    client.add(args.name,args.recipients)
 
 def get(client, args):
     client.get(args.name)
@@ -21,6 +21,7 @@ def main():
     parser_add = subparsers.add_parser('add', help="Add Secret")
     parser_add.set_defaults(func=add)
     parser_add.add_argument("name", help="Name of the secret")
+    parser_add.add_argument("--recipient","-r",nargs="+", help="Recipients", dest="recipients")
 
     parser_get = subparsers.add_parser('get' , help="Get secret")
     parser_get.set_defaults(func=get)

@@ -91,7 +91,7 @@ class Client:
         return recipients
         
 
-    def add(self, name):
+    def add(self, name, recipients):
         # Add a secret to the database
         secretpath = os.path.join(self.config.secrets,name)
 
@@ -106,7 +106,14 @@ class Client:
             return 1
 
         # Build a list of recipients
-        recipients = self._readrecipients()
+        if recipients:
+            # Recipients were given on command line.
+            for r in recipients:
+                if not self.checkrecipient(r):
+                    sys.exit(1)
+            recipients = set(recipients)
+        else:
+            recipients = self._readrecipients()
         # Check that users public key is trusted
         if not self.checkrecipient(self.config.user):
             sys.exit(1)
