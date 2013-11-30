@@ -8,6 +8,29 @@ import pprint
 
 import config
 
+class RecipientList:
+    def __init__(self,gpg,filter=None):
+        self.recipients = []
+        keys = gpg.list_keys()
+        for key in keys:
+            if key['trust'] == 'u':
+                for uid in key['uids']:
+                    if uid not in self.recipients:
+                        if not filter:
+                            self.recipients.append(uid)
+                        elif filter in uid:
+                            self.recipients.append(uid)
+
+    def list(self):
+        for key,value in enumerate(self.recipients):
+            print "  %s: %s"%(key,value)
+
+    def get(self,num):
+        try:
+            return self.recipients[num]
+        except IndexError:
+            return None
+
 class Client:
     def __init__(self):
         self.config = config.Config()
@@ -15,19 +38,58 @@ class Client:
         self._findprivatekey()
 #        self.preauth()
 
-    def checktrust(self, user):
+    def checkrecipient(self, user):
+        # Check that we have a key for a recipient and that we trust it
+
+        if user=='':
+            return None
         keys = self.gpg.list_keys()
         for key in keys:
             for uid in key['uids']:
-                if uid == user:
+                if user in uid:
                     if key['trust'] == 'u':
-                        return 0
+                        return key
                     else:
-                        print "ERROR: Key not trusted"
-                        return 1
-        print "ERROR: Key not found"
-        return 1
+                        print "Corresponding Key for %s isnot trusted"%user
+                        return None
+        print "Corresponding Key for %s not found."%user
+        return None
 
+    def _readrecipients(self):
+        # Interactive input for building a list of recipients.
+        def readrecipientshelp():
+            print "Enter recipients, one per line. Blank line to finish."
+            print "L <filter>: List possible Recipients"
+            print "?: Print this help"
+        
+        recipients = set()
+        r = None
+        readrecipientshelp()
+        while r != "":
+            r = raw_input("Enter Recipient: ")
+            if r == '?':
+                # Show help
+                readrecipientshelp()
+            elif r == 'L'or r.startswith('L '):
+                # List valid recipients
+                if r == 'L':
+                    recipients_list = RecipientList(self.gpg)
+                else:
+                    filter_ = r.lstrip('L ')
+                    recipients_list = RecipientList(self.gpg,filter_)
+                count = 1
+                recipients_list.list()
+            elif re.match('[0-9]+$',r):
+                # Add recipient by index number
+                if recipients_list:
+                    r = recipients_list.get(int(r))
+                    if r and self.checkrecipient(r):
+                        recipients.add(r)
+            elif self.checkrecipient(r):
+                # Add valid recipient
+                recipients.add(r)
+        return recipients
+        
 
     def add(self, name):
         # Add a secret to the database
@@ -43,13 +105,18 @@ class Client:
             print "A secret under this name exists, not adding."
             return 1
 
-        #Check that users public key is trusted
-        if self.checktrust(self.config.user) == 1:
+        # Build a list of recipients
+        recipients = self._readrecipients()
+        # Check that users public key is trusted
+        if not self.checkrecipient(self.config.user):
             sys.exit(1)
+        # Add ourselves to the recipient list
+        recipients.add(self.config.user)
+        
 
-        # Prompt for user to enter secretpath
+        # Prompt for user to enter secret
         secret = getpass.getpass("Enter Secret (not echoed): ")
-        secretgpg = str(self.gpg.encrypt(secret, self.config.user))
+        secretgpg = str(self.gpg.encrypt(secret, list(recipients)))
         if secretgpg == "":
             print "ERROR: Failed to encrypt secret."
             sys.exit(1)
