@@ -27,6 +27,9 @@ class Client:
         # Prompt for user to enter secretpath
         secret = getpass.getpass("Enter Secret (not echoed): ")
         secretgpg = str(self.gpg.encrypt(secret, self.config.user))
+        if secretgpg == "":
+            print "ERROR: Failed to encrypt secret."
+            sys.exit(1)
 
         # Write the plain secret
         with open(os.path.join(secretpath,"plain.gpg"),"w") as file:
