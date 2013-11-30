@@ -33,6 +33,11 @@ class Client:
         # Add a secret to the database
         secretpath = os.path.join(self.config.secrets,name)
 
+        # Check that name is valid
+        if not re.match("[a-zA-Z0-9.-]+$",name):
+            print "ERROR: Invalid secret name"
+            sys.exit(1)
+
         # Check to see if secretpath already exists.
         if os.path.exists(secretpath):
             print "A secret under this name exists, not adding."
