@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>secretsafe.client &mdash; Secret Safe 0.1 documentation</title>
+    
+    <link href='http://fonts.googleapis.com/css?family=Maven+Pro:400,700|Anonymous+Pro' rel='stylesheet' type='text/css'>    
+    <link rel="stylesheet" href="../../../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../../../_static/overrides.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="Secret Safe 0.1 documentation" href="../../../" />
+    <link rel="up" title="Module code" href="../../" /> 
+  </head>
+  <body>
+    <div class="wrapper">
+        <div class="container" id="toprow">
+            <div class="row">
+                <div class="span12">
+
+
+    
+ 
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="../../../"><img
+                src="../../../_static/img/logo.png"
+            alt="home">Secret Safe</a>
+            <ul class="nav">
+                <li><a href="../../" accesskey="U">Module code</a></li>
+      
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle"
+                        data-toggle="dropdown">Documentation <b class="caret"></b></a>
+                    <ul class="dropdown-menu globaltoc" id="gtocmenu"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../design/">Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/secretsafe/">secretsafe package</a></li>
+</ul>
+</ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle"
+                        data-toggle="dropdown">Sections <b class="caret"></b></a>
+                    <ul class="dropdown-menu localtoc" id="ltocmenu"></ul>
+                </li>
+            </ul>
+            <ul class="nav pull-right">
+                      <li class="divider-vertical"></li>
+                      <li>
+                         <form class="navbar-search pull-left"
+                             action="../../../search/" method="GET">
+                            <input type="text" name="q" class="search-query span2" placeholder="Search">
+                        </form>
+                      </li>
+                    </ul>
+        </div>
+    </div>
+</div>
+                    <div class="documentwrapper">
+                        <div class="body">
+                            
+  <h1>Source code for secretsafe.client</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">gnupg</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">getpass</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+
+<span class="kn">import</span> <span class="nn">config</span>
+
+<div class="viewcode-block" id="RecipientList"><a class="viewcode-back" href="../../../code/secretsafe/#secretsafe.client.RecipientList">[docs]</a><span class="k">class</span> <span class="nc">RecipientList</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">gpg</span><span class="p">,</span><span class="nb">filter</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recipients</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">gpg</span><span class="o">.</span><span class="n">list_keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="s">&#39;trust&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;u&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">key</span><span class="p">[</span><span class="s">&#39;uids&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">recipients</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">filter</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">recipients</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="nb">filter</span> <span class="ow">in</span> <span class="n">uid</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">recipients</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RecipientList.list"><a class="viewcode-back" href="../../../code/secretsafe/#secretsafe.client.RecipientList.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recipients</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;  </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="RecipientList.get"><a class="viewcode-back" href="../../../code/secretsafe/#secretsafe.client.RecipientList.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">num</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recipients</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div></div>
+<div class="viewcode-block" id="Client"><a class="viewcode-back" href="../../../code/secretsafe/#secretsafe.client.Client">[docs]</a><span class="k">class</span> <span class="nc">Client</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">Config</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gpg</span> <span class="o">=</span> <span class="n">gnupg</span><span class="o">.</span><span class="n">GPG</span><span class="p">(</span><span class="n">gnupghome</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;main&quot;</span><span class="p">,</span><span class="s">&quot;gnupghome&quot;</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_findprivatekey</span><span class="p">()</span>
+<span class="c">#        self.preauth()</span>
+
+<div class="viewcode-block" id="Client.checkrecipient"><a class="viewcode-back" href="../../../code/secretsafe/#secretsafe.client.Client.checkrecipient">[docs]</a>    <span class="k">def</span> <span class="nf">checkrecipient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="c"># Check that we have a key for a recipient and that we trust it</span>
+
+        <span class="k">if</span> <span class="n">user</span><span class="o">==</span><span class="s">&#39;&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpg</span><span class="o">.</span><span class="n">list_keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">key</span><span class="p">[</span><span class="s">&#39;uids&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">uid</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="s">&#39;trust&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;u&#39;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">key</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="s">&quot;Corresponding Key for </span><span class="si">%s</span><span class="s"> isnot trusted&quot;</span><span class="o">%</span><span class="n">user</span>
+                        <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">print</span> <span class="s">&quot;Corresponding Key for </span><span class="si">%s</span><span class="s"> not found.&quot;</span><span class="o">%</span><span class="n">user</span>
+        <span class="k">return</span> <span class="bp">None</span>
+</div>
+    <span class="k">def</span> <span class="nf">_readrecipients</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Interactive input for building a list of recipients.</span>
+        <span class="k">def</span> <span class="nf">readrecipientshelp</span><span class="p">():</span>
+            <span class="k">print</span> <span class="s">&quot;Enter recipients, one per line. Blank line to finish.&quot;</span>
+            <span class="k">print</span> <span class="s">&quot;L &lt;filter&gt;: List possible Recipients&quot;</span>
+            <span class="k">print</span> <span class="s">&quot;?: Print this help&quot;</span>
+        
+        <span class="n">recipients</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">readrecipientshelp</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">r</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">(</span><span class="s">&quot;Enter Recipient: &quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="s">&#39;?&#39;</span><span class="p">:</span>
+                <span class="c"># Show help</span>
+                <span class="n">readrecipientshelp</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">r</span> <span class="o">==</span> <span class="s">&#39;L&#39;</span><span class="ow">or</span> <span class="n">r</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;L &#39;</span><span class="p">):</span>
+                <span class="c"># List valid recipients</span>
+                <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="s">&#39;L&#39;</span><span class="p">:</span>
+                    <span class="n">recipients_list</span> <span class="o">=</span> <span class="n">RecipientList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gpg</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">filter_</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&#39;L &#39;</span><span class="p">)</span>
+                    <span class="n">recipients_list</span> <span class="o">=</span> <span class="n">RecipientList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gpg</span><span class="p">,</span><span class="n">filter_</span><span class="p">)</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">recipients_list</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">&#39;[0-9]+$&#39;</span><span class="p">,</span><span class="n">r</span><span class="p">):</span>
+                <span class="c"># Add recipient by index number</span>
+                <span class="k">if</span> <span class="n">recipients_list</span><span class="p">:</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">recipients_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">r</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkrecipient</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                        <span class="n">recipients</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkrecipient</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                <span class="c"># Add valid recipient</span>
+                <span class="n">recipients</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">recipients</span>
+        
+
+<div class="viewcode-block" id="Client.add"><a class="viewcode-back" href="../../../code/secretsafe/#secretsafe.client.Client.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">recipients</span><span class="p">):</span>
+        <span class="c"># Add a secret to the database</span>
+        <span class="n">secretpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">secrets</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c"># Check that name is valid</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">&quot;[a-zA-Z0-9.-]+$&quot;</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;ERROR: Invalid secret name&quot;</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c"># Check to see if secretpath already exists.</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">secretpath</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;A secret under this name exists, not adding.&quot;</span>
+            <span class="k">return</span> <span class="mi">1</span>
+
+        <span class="c"># Build a list of recipients</span>
+        <span class="k">if</span> <span class="n">recipients</span><span class="p">:</span>
+            <span class="c"># Recipients were given on command line.</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">recipients</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkrecipient</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">recipients</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">recipients</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">recipients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readrecipients</span><span class="p">()</span>
+        <span class="c"># Check that users public key is trusted</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkrecipient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">user</span><span class="p">):</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c"># Add ourselves to the recipient list</span>
+        <span class="n">recipients</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        
+
+        <span class="c"># Prompt for user to enter secret</span>
+        <span class="n">secret</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s">&quot;Enter Secret (not echoed): &quot;</span><span class="p">)</span>
+        <span class="n">secretgpg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gpg</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">secret</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">recipients</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">secretgpg</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;ERROR: Failed to encrypt secret.&quot;</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">secretpath</span><span class="p">)</span>
+        <span class="c"># Write the plain secret</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">secretpath</span><span class="p">,</span><span class="s">&quot;plain.gpg&quot;</span><span class="p">),</span><span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
+            <span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">secretgpg</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Client.get"><a class="viewcode-back" href="../../../code/secretsafe/#secretsafe.client.Client.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="c"># View a scret from the database</span>
+        <span class="n">secretpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">secrets</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c"># Check to see if secretpath already exists.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">secretpath</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;A secret under this name does not exist&quot;</span>
+            <span class="k">return</span> <span class="mi">1</span>
+
+        <span class="c">#Read the secret</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">secretpath</span><span class="p">,</span><span class="s">&quot;plain.gpg&quot;</span><span class="p">),</span><span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
+            <span class="n">secretgpg</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpg</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">secretgpg</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Client.list"><a class="viewcode-back" href="../../../code/secretsafe/#secretsafe.client.Client.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pattern</span><span class="p">):</span>
+        <span class="c"># List all secrets</span>
+
+        <span class="n">prog</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+        <span class="n">secrets</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">secrets</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">secret</span> <span class="ow">in</span> <span class="n">secrets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prog</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">secret</span>
+</div>
+    <span class="k">def</span> <span class="nf">_findprivatekey</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">private_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpg</span><span class="o">.</span><span class="n">list_keys</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span> <span class="c"># True =&gt; private keys</span>
+
+        <span class="c"># Try and find the private key assosiated with the &#39;user&#39; varible in</span>
+        <span class="c"># the config.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_private_key</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">private_keys</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">key</span><span class="p">[</span><span class="s">&#39;uids&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">uid</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">user_private_key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_private_key</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Cannot find a private key assosiated with the user: &quot;</span> \
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">user</span> \
+                <span class="o">+</span><span class="s">&quot;. Exiting...&quot;</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Client.preauth"><a class="viewcode-back" href="../../../code/secretsafe/#secretsafe.client.Client.preauth">[docs]</a>    <span class="k">def</span> <span class="nf">preauth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Check the user has valid credentials to the private key, by encrypting</span>
+        <span class="c"># and decrpyting some random data.</span>
+        <span class="c"># This allows us to warn the user before we proceed.</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">()</span> <span class="c"># Auto seeds on system time with no argument specified.</span>
+        <span class="n">clear</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">getrandbits</span><span class="p">(</span><span class="mi">1024</span><span class="p">))</span>
+        <span class="n">fingerprint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_private_key</span><span class="p">[</span><span class="s">&#39;fingerprint&#39;</span><span class="p">]</span>
+        <span class="n">crypt</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gpg</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">clear</span><span class="p">,</span> <span class="n">fingerprint</span><span class="p">))</span>
+        <span class="c"># TODO: Check that is encrypted</span>
+        <span class="n">decrypt</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gpg</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">crypt</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">clear</span> <span class="o">!=</span> <span class="n">decrypt</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Cannot preauth using private key + passphrase. Please </span><span class="se">\</span>
+<span class="s">confirm you have entered the correct password.&quot;</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        
+</pre></div></div></div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="push"><!--//--></div>
+    </div>
+    <div class="footer container">
+        <div class="span12">
+              &copy; Copyright 
+              <span id="contact">2013, Dan Foster. </span>
+              
+              Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.
+        </div>
+    </div>
+    
+    </body>
+</html>

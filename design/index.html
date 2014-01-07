@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Design &mdash; Secret Safe 0.1 documentation</title>
+    
+    <link href='http://fonts.googleapis.com/css?family=Maven+Pro:400,700|Anonymous+Pro' rel='stylesheet' type='text/css'>    
+    <link rel="stylesheet" href="../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../_static/overrides.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="Secret Safe 0.1 documentation" href="../" />
+    <link rel="next" title="&lt;no title&gt;" href="../code/modules/" />
+    <link rel="prev" title="Secret Safe" href="../" /> 
+  </head>
+  <body>
+    <div class="wrapper">
+        <div class="container" id="toprow">
+            <div class="row">
+                <div class="span12">
+
+
+    
+ 
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="../"><img
+                src="../_static/img/logo.png"
+            alt="home">Secret Safe</a>
+            <ul class="nav">
+      
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle"
+                        data-toggle="dropdown">Documentation <b class="caret"></b></a>
+                    <ul class="dropdown-menu globaltoc" id="gtocmenu"><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code/secretsafe/">secretsafe package</a></li>
+</ul>
+</ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle"
+                        data-toggle="dropdown">Sections <b class="caret"></b></a>
+                    <ul class="dropdown-menu localtoc" id="ltocmenu"><ul>
+<li><a class="reference internal" href="#">Design</a><ul>
+<li><a class="reference internal" href="#overall-design">Overall Design</a><ul>
+<li><a class="reference internal" href="#git">Git</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#key-trust">Key Trust</a></li>
+<li><a class="reference internal" href="#client-server-local-mode">Client-Server &amp; Local Mode</a><ul>
+<li><a class="reference internal" href="#local-mode">Local mode</a></li>
+<li><a class="reference internal" href="#client-server-mode">Client-Server mode</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+                </li>
+               <li> <a title="Secret Safe" href="../">Prev</a></li>
+               <li> <a title="&lt;no title&gt;" href="../code/modules/">Next</a></li>
+            </ul>
+            <ul class="nav pull-right">
+                      <li class="divider-vertical"></li>
+                      <li>
+                         <form class="navbar-search pull-left"
+                             action="../search/" method="GET">
+                            <input type="text" name="q" class="search-query span2" placeholder="Search">
+                        </form>
+                      </li>
+                    </ul>
+        </div>
+    </div>
+</div>
+                    <div class="documentwrapper">
+                        <div class="body">
+                            
+  <div class="section" id="design">
+<h1>Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overall-design">
+<h2>Overall Design<a class="headerlink" href="#overall-design" title="Permalink to this headline">¶</a></h2>
+<p>Secret Safe uses GPG encryption to safely store all secrets. GPG is suitable because it supports  multiple-key encryption by default and allows others to encrypt secrets with their public key without knowing the users private key.</p>
+<div class="section" id="git">
+<h3>Git<a class="headerlink" href="#git" title="Permalink to this headline">¶</a></h3>
+<p>The secret back-end is stored in on disk in a git repository. This allows secretsafe to keep a history of previous secrets.</p>
+</div>
+</div>
+<div class="section" id="key-trust">
+<h2>Key Trust<a class="headerlink" href="#key-trust" title="Permalink to this headline">¶</a></h2>
+<p>//TODO: Key Trust</p>
+</div>
+<div class="section" id="client-server-local-mode">
+<h2>Client-Server &amp; Local Mode<a class="headerlink" href="#client-server-local-mode" title="Permalink to this headline">¶</a></h2>
+<p>Secretsafe has 2 operation models. <cite>Local</cite> and <cite>Client-Server</cite>.</p>
+<div class="section" id="local-mode">
+<h3>Local mode<a class="headerlink" href="#local-mode" title="Permalink to this headline">¶</a></h3>
+<p>In local mode, the user has a copy of the whole git repository containing all the secrets in an encrypted format. Depending on your level of paranoia, this may be an issue if you believe an adversity could get hold of your git repository and brute-force a secret off-line.</p>
+<p>The sharing of secrets in this mode is not done by secretsafe and left to the standard tools available by git.</p>
+</div>
+<div class="section" id="client-server-mode">
+<h3>Client-Server mode<a class="headerlink" href="#client-server-mode" title="Permalink to this headline">¶</a></h3>
+<p>In client-server mode, a secretsafe server is run that contains all the secrets. A client first authenticates to the server before the encrypted secret is sent to the client. Decryption still happens client side.</p>
+<p>While git is still used for history, the sharing of secrets is done by secretsafe itself, as clients connect to the same server.</p>
+</div>
+</div>
+</div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="push"><!--//--></div>
+    </div>
+    <div class="footer container">
+        <div class="span12">
+              &copy; Copyright 
+              <span id="contact">2013, Dan Foster. </span>
+              
+              Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.
+        </div>
+    </div>
+    
+    </body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>secretsafe package &mdash; Secret Safe 0.1 documentation</title>
+    
+    <link href='http://fonts.googleapis.com/css?family=Maven+Pro:400,700|Anonymous+Pro' rel='stylesheet' type='text/css'>    
+    <link rel="stylesheet" href="../../_static/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap.js"></script>
+    <script type="text/javascript" src="../../_static/overrides.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="Secret Safe 0.1 documentation" href="../../" />
+    <link rel="up" title="&lt;no title&gt;" href="../modules/" />
+    <link rel="prev" title="&lt;no title&gt;" href="../modules/" /> 
+  </head>
+  <body>
+    <div class="wrapper">
+        <div class="container" id="toprow">
+            <div class="row">
+                <div class="span12">
+
+
+    
+ 
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="../../"><img
+                src="../../_static/img/logo.png"
+            alt="home">Secret Safe</a>
+            <ul class="nav">
+                <li><a href="../modules/" accesskey="U">&lt;no title&gt;</a></li>
+      
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle"
+                        data-toggle="dropdown">Documentation <b class="caret"></b></a>
+                    <ul class="dropdown-menu globaltoc" id="gtocmenu"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../design/">Design</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">secretsafe package</a></li>
+</ul>
+</ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle"
+                        data-toggle="dropdown">Sections <b class="caret"></b></a>
+                    <ul class="dropdown-menu localtoc" id="ltocmenu"><ul>
+<li><a class="reference internal" href="#">secretsafe package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-secretsafe.client">secretsafe.client module</a></li>
+<li><a class="reference internal" href="#module-secretsafe.config">secretsafe.config module</a></li>
+<li><a class="reference internal" href="#module-secretsafe">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+                </li>
+               <li> <a title="&lt;no title&gt;" href="../modules/">Prev</a></li>
+            </ul>
+            <ul class="nav pull-right">
+                      <li class="divider-vertical"></li>
+                      <li>
+                         <form class="navbar-search pull-left"
+                             action="../../search/" method="GET">
+                            <input type="text" name="q" class="search-query span2" placeholder="Search">
+                        </form>
+                      </li>
+                    </ul>
+        </div>
+    </div>
+</div>
+                    <div class="documentwrapper">
+                        <div class="body">
+                            
+  <div class="section" id="secretsafe-package">
+<h1>secretsafe package<a class="headerlink" href="#secretsafe-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-secretsafe.client">
+<span id="secretsafe-client-module"></span><h2>secretsafe.client module<a class="headerlink" href="#module-secretsafe.client" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="secretsafe.client.Client">
+<em class="property">class </em><tt class="descclassname">secretsafe.client.</tt><tt class="descname">Client</tt><a class="reference internal" href="../../_modules/secretsafe/client/#Client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#secretsafe.client.Client" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="secretsafe.client.Client.add">
+<tt class="descname">add</tt><big>(</big><em>name</em>, <em>recipients</em><big>)</big><a class="reference internal" href="../../_modules/secretsafe/client/#Client.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#secretsafe.client.Client.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="secretsafe.client.Client.checkrecipient">
+<tt class="descname">checkrecipient</tt><big>(</big><em>user</em><big>)</big><a class="reference internal" href="../../_modules/secretsafe/client/#Client.checkrecipient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#secretsafe.client.Client.checkrecipient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that we have a key for a recipient and that we trust it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="secretsafe.client.Client.get">
+<tt class="descname">get</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../../_modules/secretsafe/client/#Client.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#secretsafe.client.Client.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="secretsafe.client.Client.list">
+<tt class="descname">list</tt><big>(</big><em>pattern</em><big>)</big><a class="reference internal" href="../../_modules/secretsafe/client/#Client.list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#secretsafe.client.Client.list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="secretsafe.client.Client.preauth">
+<tt class="descname">preauth</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/secretsafe/client/#Client.preauth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#secretsafe.client.Client.preauth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="secretsafe.client.RecipientList">
+<em class="property">class </em><tt class="descclassname">secretsafe.client.</tt><tt class="descname">RecipientList</tt><big>(</big><em>gpg</em>, <em>filter=None</em><big>)</big><a class="reference internal" href="../../_modules/secretsafe/client/#RecipientList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#secretsafe.client.RecipientList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="secretsafe.client.RecipientList.get">
+<tt class="descname">get</tt><big>(</big><em>num</em><big>)</big><a class="reference internal" href="../../_modules/secretsafe/client/#RecipientList.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#secretsafe.client.RecipientList.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="secretsafe.client.RecipientList.list">
+<tt class="descname">list</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/secretsafe/client/#RecipientList.list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#secretsafe.client.RecipientList.list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-secretsafe.config">
+<span id="secretsafe-config-module"></span><h2>secretsafe.config module<a class="headerlink" href="#module-secretsafe.config" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="secretsafe.config.Config">
+<em class="property">class </em><tt class="descclassname">secretsafe.config.</tt><tt class="descname">Config</tt><a class="reference internal" href="../../_modules/secretsafe/config/#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#secretsafe.config.Config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-secretsafe">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-secretsafe" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="push"><!--//--></div>
+    </div>
+    <div class="footer container">
+        <div class="span12">
+              &copy; Copyright 
+              <span id="contact">2013, Dan Foster. </span>
+              
+              Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.
+        </div>
+    </div>
+    
+    </body>
+</html>
