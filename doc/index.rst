@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Secret Safe
-======================
+Secret Safe
+===========
 
 Secret Safe is a multi-user password safe.
 
@@ -16,7 +16,7 @@ It is currently in pre-alpha and not in a useable state. If you would like to he
     :maxdepth: 2
 
     design
-
+    code/modules
 
 
 Indices and tables

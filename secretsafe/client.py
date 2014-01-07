@@ -39,7 +39,9 @@ class Client:
 #        self.preauth()
 
     def checkrecipient(self, user):
-        # Check that we have a key for a recipient and that we trust it
+        """
+        Check that we have a key for a recipient and that we trust it.
+        """
 
         if user=='':
             return None
