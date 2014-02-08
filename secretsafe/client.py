@@ -37,6 +37,11 @@ class Client:
         self.gpg = gnupg.GPG(gnupghome=os.path.expanduser(self.config.config.get("main","gnupghome")))
         self._findprivatekey()
 #        self.preauth()
+        if self.config.mode == 'local':
+            if not os.path.isdir(self.config.secrets):
+                #No secret dir, lets create an empty one.
+                os.mkdir(self.config.secrets)
+
 
     def checkrecipient(self, user):
         """
