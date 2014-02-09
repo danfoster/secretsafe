@@ -190,7 +190,12 @@ class Client(object):
         clear = str(random.getrandbits(1024))
         fingerprint = self.user_private_key['fingerprint']
         crypt = str(self.gpg.encrypt(clear, fingerprint))
-        # TODO: Check that is encrypted
+
+        # Check that is encrypted
+        if not len(crypt) > 0 or crypt == clean:
+            print "ERROR: Failed to encrypt secret."
+            sys.exit(1)
+
         decrypt = str(self.gpg.decrypt(crypt))
         if clear != decrypt:
             print "Cannot preauth using private key + passphrase. Please \
