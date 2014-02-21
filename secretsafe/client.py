@@ -9,11 +9,11 @@ import re
 
 import secretsafe.config
 
-class RecipientList(object):
-    """List of GPG recipients that can be retrieved by index"""
-    def __init__(self, gpg, filter_=None):
+class KeyList(object):
+    """List of GPG keys that can be navigated"""
+    def __init__(self, gpg, filter_=None, private=False):
         self.recipients = []
-        keys = gpg.list_keys()
+        keys = gpg.list_keys(private)
         for key in keys:
             if key['trust'] == 'u':
                 for uid in key['uids']:
@@ -86,10 +86,10 @@ class Client(object):
             elif rinput == 'L'or rinput.startswith('L '):
                 # List valid recipients
                 if rinput == 'L':
-                    recipients_list = RecipientList(self.gpg)
+                    recipients_list = KeyList(self.gpg)
                 else:
                     filter_ = rinput.lstrip('L ')
-                    recipients_list = RecipientList(self.gpg, filter_)
+                    recipients_list = KeyList(self.gpg, filter_)
                 recipients_list.list()
             elif re.match('[0-9]+$', rinput):
                 # Add recipient by index number
