@@ -40,8 +40,11 @@ class Client(object):
     def __init__(self):
         self.config = secretsafe.config.Config()
         self.user_private_key = None
-        path = os.path.expanduser(self.config.config.get("main", "gnupghome"))
-        self.gpg = gnupg.GPG(gnupghome=path)
+        if self.config.config.has_option("main","gnupghome"):
+            path = os.path.expanduser(self.config.config.get("main", "gnupghome"))
+            self.gpg = gnupg.GPG(gnupghome=path)
+        else:
+            self.gpg = gnupg.GPG()
         self._findprivatekey()
 #        self.preauth()
         if self.config.mode == 'local':
@@ -62,7 +65,7 @@ class Client(object):
                     if key['trust'] == 'u':
                         return key
                     else:
-                        print "Corresponding Key for %s isnot trusted"%user
+                        print "Corresponding Key for %s is not trusted"%user
                         return None
         print "Corresponding Key for %s not found."%user
         return None

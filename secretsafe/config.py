@@ -30,8 +30,6 @@ class Config(object):
         # TODO: Pick user from list of GPG private keys
         i = raw_input('Enter username: ')
         self.config.set("main", "user", i)
-        # Add sensible guess of GPG home
-        self.config.set("main", "gnupghome", "~/.gnupg")
         # Add sensible guess of Secrets home
         self.config.set("main", "secrets", "~/secretsafe.data")
 
