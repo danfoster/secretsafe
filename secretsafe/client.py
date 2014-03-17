@@ -8,6 +8,7 @@ import getpass
 import re
 
 import secretsafe.config
+import secretsafe.clientutils
 
 class KeyList(object):
     """List of GPG keys that can be navigated"""
@@ -158,7 +159,7 @@ class Client(object):
         #Read the secret
         with open(os.path.join(secretpath, "plain.gpg"), "r") as file_:
             secretgpg = file_.read()
-        print self.gpg.decrypt(secretgpg)
+        print secretsafe.clientutils.decrypt(self.gpg,secretgpg)
 
     def list(self, pattern):
         """List all secrets."""
